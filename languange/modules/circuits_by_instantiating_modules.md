@@ -9,6 +9,7 @@ module top_module ( input clk, input d, output q );
     d_ff mod2( .clk(clk), .d(q1), .q(q) );
 endmodule
 ```
+![alt text](/assets/images/len_3_shift_reg.png)
 ```less
         |--------------------------X--------------------------|
         |                          |                          |
@@ -59,6 +60,7 @@ d   ----/----X-|d            q|----/----X-|d            q|-----/----X--|d       
         2                                                                                               |
 sel ----/-----------------------------------------------------------------------------------------------|
 ```
+![alt text](/assets/images/len_3_8bit_shift_reg.png)
 # 32-bit adder using 16 bit adder modules
 ```verilog
 module top_module(
@@ -86,6 +88,7 @@ b ----/-----|-X------/--------|b             |  16    |  | |--|b             |  
                      b[31:16]                         |------------------------------X----/---- sum
                                                                      sum[15:0]
 ```
+![alt text](/assets/images/32bit_adder_using_16bit_adders.png)
 # Carry Select Adder
 ```verilog
 module top_module(
@@ -120,6 +123,7 @@ b ----/-----|-X------/--------|b             |  16 | |  | |---|b             |  
                                                    | |------------------/-----------------------------------------------------------|-------------------|
                                                    |--------------------------------------------------------------------------------|
 ```
+![alt text](/assets/images/32bit_carry_select_adder_using_16bit_adders.png)
 ## Adder Subtractor
 ```verilog
 module top_module(
@@ -152,3 +156,4 @@ sub ---------|                 |-|----------/----------------------------|--| | 
                                         c[31:16]                         |------------------------------X----/---- sum
                                                                                         sum[15:0]
 ```
+![alt text](/assets/images/32bit_adder_subtractor_using_16bit_adders.png)
