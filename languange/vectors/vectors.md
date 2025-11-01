@@ -69,6 +69,7 @@ module top_module(
 endmodule
 ```
 other bitwise operator and their logical form is `&`(bitwise) and `&&`(logical). `^`(bitwise xor) don't have any logical counterpart.
+## Reduction operator
 `&`, `|` and `^` can also be operated on single vector variable, they just behave like a gate with inputs as all the bits of the vector and 1 bit output.
 ```verilog
 module top_module(
@@ -80,6 +81,42 @@ module top_module(
 	assign out_and = &in;
     assign out_or = |in;
     assign out_xor = ^in;
+endmodule
+```
+```verilog
+module top_module (
+    input [7:0] in,
+    output parity);
+	assign parity = ^in;
+endmodule
+```
+### Reversing Bit Ordering
+```verilog
+module top_module (
+	input [99:0] in,
+	output reg [99:0] out
+);
+
+	always @(*) begin
+		for (int i=0;i<$bits(out);i++)		// $bits() is a system function that returns the width of a signal.
+			out[i] = in[$bits(out)-i-1];	// $bits(out) is 100 because out is 100 bits wide.
+	end
+
+endmodule
+```
+```verilog
+// get popcount of vector
+module top_module (
+	input [254:0] in,
+	output reg [7:0] out
+);
+
+	always @(*) begin	// Combinational always block
+		out = 0;
+		for (int i=0;i<255;i++)
+			out = out + in[i];
+	end
+
 endmodule
 ```
 ## Concatenation

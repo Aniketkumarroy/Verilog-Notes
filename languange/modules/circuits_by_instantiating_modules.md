@@ -157,3 +157,52 @@ sub ---------|                 |-|----------/----------------------------|--| | 
                                                                                         sum[15:0]
 ```
 ![alt text](/assets/images/32bit_adder_subtractor_using_16bit_adders.png)
+
+### a 100-bit adder using 100 1-bit adders
+```verilog
+module top_module (
+    input  [99:0] a,
+    input  [99:0] b,
+    input         cin,
+    output [99:0] sum,
+    output [99:0] cout   // carry-out of each full adder
+);
+    genvar i;
+    wire [100:0] c;      // internal carry chain (c[0] = cin, c[100] = final carry)
+    assign c[0] = cin;
+
+    generate
+        for (i = 0; i < 100; i = i + 1) begin : FA_CHAIN
+            full_adder fa (
+                .a   (a[i]),
+                .b   (b[i]),
+                .cin (c[i]),
+                .sum (sum[i]),
+                .cout(c[i+1])
+            );
+            assign cout[i] = c[i+1];  // expose carry-out of each stage
+        end
+    endgenerate
+endmodule
+
+module full_adder (
+    input  a,
+    input  b,
+    input  cin,
+    output sum,
+    output cout
+);
+    assign {cout, sum}  = a + b + cin;
+endmodule
+```
+```less
+  b ----/---------X--------------X----------------------|
+  a ----/----X----|---------X----|-----......------|    |
+       100  _|____|_       _|____|_               _|____|_
+  cin -|---|  Full  |-|---|  Full  |-|-......----|  Full  |-|
+       |c0 |  Adder | |c1 |  Adder | |c2.....    |  Adder | |
+       |    ----|---  |    ----|---  | ......     ----|---  |
+       |        |     |        |     |                |     |   100
+       |--------|-----X--------|-----X-......---------|-----X----/---- cout
+                |--------------X-------......---------X----------/---- sum
+```
