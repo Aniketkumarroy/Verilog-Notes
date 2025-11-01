@@ -36,7 +36,7 @@ module top_module (
     d_ff8 mod1(.clk(clk), .d(q0), .q(q1));
     d_ff8 mod2(.clk(clk), .d(q1), .q(q2));
 
-    mux4x2 mod3(.in0(d), .in1(q0), .in2(q1), .in3(q2), .out(q));
+    mux4x2 mod3(.in0(d), .in1(q0), .in2(q1), .in3(q2), .out(q), .sel(sel));
 endmodule
 ```
 ```less
@@ -99,7 +99,7 @@ module top_module(
     add16 upper0(.a(a[31:16]), .b(b[31:16]), .cin(1'b0), .sum(sum0), .cout(c0));
     add16 upper1(.a(a[31:16]), .b(b[31:16]), .cin(1'b1), .sum(sum1), .cout(c1));
 
-    mux2x1 sel(.in0(sum0), .in1(sum1), .out(sum[31:16]));
+    assign sum[31:16] = (carry == 1'b0) ? sum0 : sum1;
 endmodule
 ```
 ```less
