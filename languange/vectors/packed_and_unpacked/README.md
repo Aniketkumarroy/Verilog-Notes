@@ -14,8 +14,8 @@ wire [3:0][7:0] data_bus;       // 4 elements of 8 bits each (total 32 bits)
 
 ```verilog
 // <Datatype> var[<MSB>:<LSB>]
-wire bit_memory [0:15];   // unpacked array of 16 elements, each 1 bit
-wire [7:0] memory [0:15];   // unpacked array of 16 elements, each 8 bits
+reg bit_memory [0:15];   // unpacked array of 16 elements, each 1 bit
+reg [7:0] memory [0:15];   // unpacked array of 16 elements, each 8 bits
 ```
 
 | Aspect                | **Packed Array**                                             | **Unpacked Array**                                                                         |
@@ -25,6 +25,7 @@ wire [7:0] memory [0:15];   // unpacked array of 16 elements, each 8 bits
 | **Declaration order** | Declared **before** the variable name.                       | Declared **after** the variable name.                                                      |
 | **Indexing order**    | **Right-most index varies fastest** (MSB→LSB, like vectors). | **Left-most index varies fastest**, like standard C arrays.                                |
 | **Bit-level ops**     | Supports bit-slicing, part-select, concatenation.            | Cannot do bit-slicing across elements; access elements one by one.                         |
+| **Base Datatype**     | can be both **net**(wire, tri, etc) and **reg**.             | can be only **reg**                                                                        |
 | **Synthesis**         | Represents hardware like a **bus or register**.              | Represents **memories, arrays of registers**, or FIFOs.                                    |
 ---
 
@@ -32,12 +33,12 @@ wire [7:0] memory [0:15];   // unpacked array of 16 elements, each 8 bits
 we can do part select or bit select
 ```verilog
 wire [31:0] bus;
-bus[7:0]   = 8'hAA;     // part-select
-bus[15]    = 1'b1;      // bit-select
+assign bus[7:0]   = 8'hAA;     // part-select
+assign bus[15]    = 1'b1;      // bit-select
 ```
 Multi-dimensional packed arrays behave like flattened bit vectors in synthesis and assignment:
 ```verilog
-wire [1:0][3:0] two_by_four; // 2 elements, each 4 bits = total 8 bits
+reg [1:0][3:0] two_by_four; // 2 elements, each 4 bits = total 8 bits
 
 initial begin
   two_by_four = 8'b1010_1100; // Assigns as if it's a single 8-bit vector
@@ -46,8 +47,8 @@ end
 Packed arrays are synthesizable and used heavily to model buses, registers, or packed fields.
 ## Unpacked Arrays
 ```verilog
-wire [7:0] memory [0:15];   // unpacked array of 16 elements, each 8 bits
-wire [3:0] array2d [0:7][0:1];  // 8×2 unpacked elements, each 4-bit packed
+reg [7:0] memory [0:15];   // unpacked array of 16 elements, each 8 bits
+reg [3:0] array2d [0:7][0:1];  // 8×2 unpacked elements, each 4-bit packed
 ```
 This behaves like a memory or array of registers, not a single wide bus.
 ```verilog
@@ -69,7 +70,7 @@ wire [3:0] vec;   // 4 bits
 - Unpacked Arrays
 Indexing is like C arrays — each dimension is accessed separately.
 ```verilog
-logic [7:0] arr [0:3];
+reg [7:0] arr [0:3];
 arr[0] = 8'h11;
 arr[1] = 8'h22;
 ```
@@ -80,11 +81,16 @@ arr[1] = 8'h22;
 | Unpacked array | **Array of registers**, like a small RAM.      |
 
 ```verilog
-wire [127:0] mem_flat;
+wire [32:0] mem_flat;    // 1 element of 32 bits packed into 32-bit vector;
+wire [3:0][7:0] mem;     // 4 elements of 8 bits packed into 32-bit vector;
 ```
 Synthesizes to a single 128-bit register.
+```less
+mem_flat = [ 32-bit element ]
+mem = [ 8-bit element3 | 8-bit element2 | 8-bit element1 | 8-bit element0 ]
+```
 ```verilog
-wire [7:0] reg_file [0:31];   // 32 x 8-bit memory
+reg [7:0] reg_file [0:31];   // 32 x 8-bit memory
 ```
 will get synthesized to a 32 x 8-bit register file
 ```less
