@@ -84,7 +84,7 @@ arr[1] = 8'h22;
 wire [32:0] mem_flat;    // 1 element of 32 bits packed into 32-bit vector;
 wire [3:0][7:0] mem;     // 4 elements of 8 bits packed into 32-bit vector;
 ```
-Synthesizes to a single 128-bit register.
+Synthesizes to a single 32-bit register.
 ```less
 mem_flat = [ 32-bit element ]
 mem = [ 8-bit element3 | 8-bit element2 | 8-bit element1 | 8-bit element0 ]
